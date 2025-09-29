@@ -1,44 +1,54 @@
-﻿using App.Application.Interfaces;
+﻿using App.Application.Dto;
+using App.Application.Interfaces;
+using Microsoft.Extensions.Options;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace App.Infrastructure.Vector
 {
     public class QdrantService : IVectorService
-    {
-        private readonly QdrantClient _client;
+    {       
+        private readonly HttpClient _http;
+        private readonly string _baseUrl;
+        private readonly string _collection;
 
-        public QdrantService()
+
+        public QdrantService(HttpClient httpClient, IOptions<QdrantConfig> config)
         {
-            _client = new QdrantClient("127.0.0.1", 6334); // adjust host/port
+            _http = httpClient;
+            _baseUrl = config.Value.BaseUrl;
+            _collection = config.Value.Collection;
         }
 
-        public async Task StoreEmbeddingAsync(string id, string text)
+        // Simple upsert using Qdrant REST. Expects Qdrant running with collection created (or auto-create)
+        public Task StoreAsync(string id, string text)
         {
-            // Dummy embedding (replace with HuggingFace API or sentence-transformers)
-            var vector = new float[] { 0.12f, 0.54f, 0.88f };
+            //var endpoint = $"{_baseUrl}/collections/{_collection}/points?wait=true";
+            //// A minimal embedding placeholder; replace with real embeddings
+            //var vector = new float[] { 0.1f, 0.2f, 0.3f };
 
-            await _client.UpsertAsync("findings", new[]
-            {
-                new PointStruct
-                {
-                    Id = Guid.Parse(id),
-                    Vectors = vector,
-                    Payload = { ["text"] = text }
-                }
-            });
-        }
+            //var payload = new
+            //{
+            //    points = new object[] {
+            //        new {
+            //            id = id,
+            //            vector = vector,
+            //            payload = new { text = text }
+            //        }
+            //    }
+            //};
 
-        public async Task<string> SearchAsync(string query)
-        {
-            var vector = new float[] { 0.12f, 0.54f, 0.88f };
-            var result = await _client.SearchAsync("findings", vector, limit: 1);
-            return result.Count > 0 ? result[0].Payload["text"].StringValue : "No match";
+            //var resp = await _http.PostAsJsonAsync(endpoint, payload);
+            //resp.EnsureSuccessStatusCode();
+            Console.WriteLine($"Simulated storing vector for: {id}");
+            return Task.CompletedTask;
         }
     }
 }

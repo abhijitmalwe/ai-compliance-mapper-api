@@ -14,4 +14,10 @@ namespace App.Application.Dto
         public IList<Finding> Findings { get; set; } = new List<Finding>();
         public string? ReportBase64 { get; set; }
     }
+
+    public class QdrantConfig
+    {
+        public string BaseUrl { get; set; } = "http://127.0.0.1:6333";
+        public string Collection { get; set; } = "findings";
+    }
 }

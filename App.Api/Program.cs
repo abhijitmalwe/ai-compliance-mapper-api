@@ -1,15 +1,19 @@
 using App.Api.Configuration;
 using App.Api.Middleware;
 using App.Api.Validation;
+using App.Application.Dto;
 using App.Application.Interfaces;
 using App.Application.Security;
 using App.Application.Service;
 using App.Infrastructure.Git;
 using App.Infrastructure.Integrations.GitHub;
 using App.Infrastructure.Repo;
+using App.Infrastructure.Reporting;
+using App.Infrastructure.Scanners;
 using App.Infrastructure.Vector;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using QuestPDF.Infrastructure;
 
 public class Program
 {
@@ -22,11 +26,14 @@ public class Program
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddControllers();
-
+        QuestPDF.Settings.License = LicenseType.Community;
+        builder.Services.AddSingleton<IPdfReportGenerator, PdfReportGenerator>();
         builder.Services.AddScoped<ISecurityMappingService, SecurityMappingService>();
         builder.Services.AddScoped<Lib2SharpGitService>();
-
-        builder.Services.AddScoped<IVectorService, QdrantService>();
+        builder.Services.AddScoped<ZapScanner>();
+        builder.Services.Configure<QdrantConfig>(builder.Configuration.GetSection("Qdrant"));
+        builder.Services.AddHttpClient<IVectorService, QdrantService>();
+        builder.Services.AddHttpClient<IVectorService, QdrantService>();
         builder.Services.AddScoped<RepoService>();
         builder.Services.AddScoped<IGitHubIssueService>(sp =>
             new GitHubIssueService(builder.Configuration["GitHub:Token"]));

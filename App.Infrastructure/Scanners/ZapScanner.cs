@@ -10,15 +10,19 @@ namespace App.Infrastructure.Scanners
 {
     public class ZapScanner
     {
-        public async Task<IEnumerable<Finding>> RunBaselineScanAsync(string targetUrl)
+        public List<Finding> Scan(string repoLocalPath)
         {
-            var cmd = $"run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t {targetUrl} -J zap_report.json";
-            // For Docker you may run "docker" with args "run ..." - or call via bash
-            var json = await ProcessRunner.RunProcessCaptureAsync("bash", $"-lc \"docker {cmd}\"");
-            // Read zap_report.json that would be generated (or parse stdout)
-            // Parse and map alerts -> Finding
-            // Example mapping omitted for brevity
-            return new List<Finding>();
+            // For PoC return a single simulated finding. Replace with real CLI tool calls.
+            var f = new Finding
+            {
+                Title = "Hardcoded DB password in appsettings.json",
+                Description = "Found a likely hardcoded connection string with password in appsettings.json.",
+                Evidence = "\"ConnectionStrings:Default\": \"Server=...;Password=pa$$w0rd;\"",
+                Severity = Severity.High,
+                Scanner = "Simulated"
+            };
+
+            return new List<Finding> { f };
         }
     }
 }

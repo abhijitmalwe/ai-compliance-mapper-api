@@ -11,5 +11,7 @@ namespace App.Application.Dto
         public string CloneUrl { get; set; } = "";
         public string Branch { get; set; } = "main";
         public string? Token { get; set; }
+        public string? RepoOwner { get; set; }
+        public string? RepoName { get; set; } = "";
     }
 }

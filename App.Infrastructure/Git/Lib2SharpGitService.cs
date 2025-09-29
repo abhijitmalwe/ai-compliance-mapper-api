@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace App.Infrastructure.Git
 {
-    public class Lib2SharpGitService : IRepoScannerService
+    public class Lib2SharpGitService
     {
         private readonly string _workspaceRoot;
         public Lib2SharpGitService(string workspaceRoot = "/tmp/compliance")

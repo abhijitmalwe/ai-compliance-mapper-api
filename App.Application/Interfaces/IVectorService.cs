@@ -8,8 +8,9 @@ namespace App.Application.Interfaces
 {
     public interface IVectorService
     {
-        Task StoreEmbeddingAsync(string id, string text);
+        //Task StoreEmbeddingAsync(string id, string text);
 
         //Task<string> SearchAsync(string query);
+        Task StoreAsync(string id, string text);
     }
 }

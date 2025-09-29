@@ -11,5 +11,6 @@ namespace App.Application.Interfaces
     {
         //Task<RepoSnapShot> CloneRepositoryAsync(string cloneUrl, string branch = "main");
         //Task<IReadOnlyList<Finding>> ScanRepositoryAsync(RepoSnapShot snapshot, CancellationToken ct = default);
+        string CloneRepo(string repoUrl, string branch, string? token = null);
     }
 }

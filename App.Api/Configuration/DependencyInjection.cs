@@ -3,7 +3,7 @@ using App.Application.Interfaces.Repositories;
 using App.Application.Interfaces.Services;
 using App.Application.Service;
 using App.Infrastructure.DBContext;
-using App.Infrastructure.Repository;
+using App.Infrastructure.Repo;
 using App.SharedConfigs.DBContext;
 
 namespace App.Api.Configuration
@@ -11,9 +11,8 @@ namespace App.Api.Configuration
     public static class DependencyInjection
     {
         public static IServiceCollection AddAppDependencies(this IServiceCollection services)
-        {
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserRepository, UserRepository>();
+        {            
+            services.AddScoped<IRepoScannerService, RepoService>();
             services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             services.AddSingleton<Func<IServiceProvider, string>>(sp =>

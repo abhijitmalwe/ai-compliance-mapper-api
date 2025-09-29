@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Repository\" />
     <Folder Include="ThirdPartyServices\" />
   </ItemGroup>
 

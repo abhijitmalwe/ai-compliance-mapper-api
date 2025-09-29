@@ -1,36 +1,48 @@
 ﻿using App.Domain.Entities;
 using App.Application.Dto;
 using QuestPDF.Fluent;
+using QuestPDF.Helpers;
 
 namespace App.Infrastructure.Reporting
 {
-    public class PdfReportGenerator
+    public interface IPdfReportGenerator
     {
-        public byte[] GenerateReport(Finding finding, List<HippaControlDto> controls)
+        byte[] Generate(Finding finding, List<(string id, string title, string explain, string remediation)> controls);
+    }
+
+    public class PdfReportGenerator: IPdfReportGenerator
+    {
+        public byte[] Generate(Finding finding, List<(string id, string title, string explain, string remediation)> controls)
         {
-            var document = Document.Create(container =>
+            var doc = Document.Create(container =>
             {
                 container.Page(page =>
                 {
-                    page.Header().Text("Security Scan Report").FontSize(20).Bold();
-                    page.Content().Padding(10).Column(col =>
+                    page.Size(PageSizes.A4);
+                    page.Margin(20);
+                    page.PageColor(Colors.White);
+                    page.Content().Column(col =>
                     {
-                        col.Item().Text($"Finding: {finding.Title}");
-                        col.Item().Text($"Description: {finding.Description}");
-                        col.Item().Text($"Evidence: {finding.Evidence}");
+                        col.Item().Text($"Compliance Scan Report").FontSize(20).Bold();
+                        col.Item().Text($"Finding: {finding.Title}").FontSize(14).Bold();
+                        col.Item().Text($"Severity: {finding.Severity}");
+                        col.Item().Text($"Scanner: {finding.Scanner}");
+                        col.Item().Text($"Evidence: {finding.Evidence}").FontSize(10);
 
-                        col.Item().Text("Mapped HIPAA Controls:");
-                        foreach (var ctrl in controls)
+                        col.Item().Text("\nMapped HIPAA Controls:").Bold();
+                        foreach (var c in controls)
                         {
-                            col.Item().Text($"- {ctrl.Id}: {ctrl.Title}");
-                            col.Item().Text($"  {ctrl.Explain}");
-                            col.Item().Text($"  Remediation: {ctrl.Remediation}");
+                            col.Item().Text($"{c.id} - {c.title}").Bold();
+                            col.Item().Text($"{c.explain}");
+                            col.Item().Text($"Remediation: {c.remediation}\n");
                         }
                     });
                 });
             });
 
-            return document.GeneratePdf();
+            using var ms = new MemoryStream();
+            doc.GeneratePdf(ms);
+            return ms.ToArray();
         }
     }
 }
