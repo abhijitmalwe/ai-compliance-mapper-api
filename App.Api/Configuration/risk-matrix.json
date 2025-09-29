@@ -1,0 +1,15 @@
+{
+  "rules": [
+    {
+      "scanner": "TruffleHog",
+      "pattern": "secret",
+      "severity": "Critical"
+    },
+    {
+      "scanner": "Semgrep",
+      "tags": [ "sqli", "xss" ],
+      "severity": "High"
+    },
+    { "defaultSeverity": "Medium" }
+  ]
+}
