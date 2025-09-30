@@ -65,17 +65,18 @@ namespace App.Api.Controllers
             await _vector.StoreAsync(finding.Id, finding.Description);
 
             // 5. Create GitHub issue (if owner/repo provided in request)
-            if (!string.IsNullOrEmpty(request.RepoOwner) && !string.IsNullOrEmpty(request.RepoName))
-            {
-                var body = $"Automated compliance finding:\n\n{finding.Title}\n\n{finding.Description}\n\nEvidence:\n{finding.Evidence}";
-                await _issueService.CreateIssueAsync(request.RepoOwner, request.RepoName, finding.Title, body);
-            }
+            //if (!string.IsNullOrEmpty(request.RepoOwner) && !string.IsNullOrEmpty(request.RepoName))
+            //{
+            //    var body = $"Automated compliance finding:\n\n{finding.Title}\n\n{finding.Description}\n\nEvidence:\n{finding.Evidence}";
+            //    await _issueService.CreateIssueAsync(request.RepoOwner, request.RepoName, finding.Title, body);
+            //}
 
             // 6. Generate PDF
             var pdfBytes = _pdfGen.Generate(finding, controls);
 
             // return PDF file
             return File(pdfBytes, "application/pdf", "scan-report.pdf");
+
         }
     }
 }

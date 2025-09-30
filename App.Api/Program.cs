@@ -3,6 +3,7 @@ using App.Api.Middleware;
 using App.Api.Validation;
 using App.Application.Dto;
 using App.Application.Interfaces;
+using App.Application.Interfaces.Services;
 using App.Application.Security;
 using App.Application.Service;
 using App.Infrastructure.Git;
@@ -31,6 +32,8 @@ public class Program
         builder.Services.AddScoped<ISecurityMappingService, SecurityMappingService>();
         builder.Services.AddScoped<Lib2SharpGitService>();
         builder.Services.AddScoped<ZapScanner>();
+        builder.Services.AddHttpClient();
+        builder.Services.AddScoped<IHipaaRiskService, HipaaRiskService>();
         builder.Services.Configure<QdrantConfig>(builder.Configuration.GetSection("Qdrant"));
         builder.Services.AddHttpClient<IVectorService, QdrantService>();
         builder.Services.AddHttpClient<IVectorService, QdrantService>();
@@ -45,6 +48,15 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
+
+        builder.Services.AddCors();
+
+        app.UseCors(builder => builder
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowed(_ => true) // Allow any origin
+            .AllowCredentials());
+
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         if (app.Environment.IsDevelopment())
         {
